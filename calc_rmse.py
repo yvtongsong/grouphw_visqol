@@ -129,6 +129,22 @@ for deg_type in deg_types:
     plt.savefig(f'individual_{deg_type}.png', dpi=300)
     plt.close()
 
+# 单独输出组间平均点图
+group_avg = df.groupby('Degradation')[['MOS_LQS','MOS_LQO']].mean()
+plt.figure(figsize=(10,5))
+plt.scatter(group_avg.index, group_avg['MOS_LQS'], color='blue', s=100, label='Average MOS-LQS')
+plt.scatter(group_avg.index, group_avg['MOS_LQO'], color='red', s=100, label='Average MOS-LQO')
+plt.plot(group_avg.index, group_avg['MOS_LQS'], color='blue', linestyle='--', alpha=0.7)
+plt.plot(group_avg.index, group_avg['MOS_LQO'], color='red', linestyle='--', alpha=0.7)
+plt.title("Average MOS per Degradation Type")
+plt.ylabel("Average MOS")
+plt.xlabel("Degradation Type")
+plt.legend()
+plt.grid(axis='y', linestyle='--', alpha=0.5)
+plt.tight_layout()
+plt.savefig("average_mos.png", dpi=300)
+plt.show()
+
 # 绘制总图：每组个体点 + 组间平均点
 fig, axes = plt.subplots(n_types+1, 1, figsize=(15, 3*(n_types+1)), constrained_layout=True)
 

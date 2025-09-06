@@ -223,4 +223,6 @@ dtype: float64
 
 ![](./images/individual_noise.png)
 
+![](./images/average_mos.png)
+
 ![](./images/total.png)
