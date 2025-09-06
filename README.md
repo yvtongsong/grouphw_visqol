@@ -1,8 +1,8 @@
 # 环境配置
 
-## 开启容器实例
+## 启动容器实例
 
-使用miniconda3镜像:
+使用`miniconda3`镜像:
 
 ```bash
 docker run -it -v ~/Downloads/TCD-VOIP:/root/TCD_VOIP --name visqol continuumio/miniconda3
@@ -84,11 +84,15 @@ done
 
 对所有样本(整体):
 
-$$\text{RMSE}_{\text{overall}} = \sqrt{\frac{1}{N} \sum_{i=1}^{N} (MOS\_LQS_i - MOS\_LQO_i)^2}$$
+```math
+\text{RMSE}_{\text{overall}} = \sqrt{\frac{1}{N} \sum_{i=1}^{N} (\text{MOS_LQS}_i - \text{MOS_LQO}_i)^2}
+```
 
 对分条件(chop, clip, compspkr, echo, noise):
 
-$$\text{RMSE}_{\text{condition}} = \sqrt{\frac{1}{N_c} \sum_{i=1}^{N_c} (MOS\_LQS_i - MOS\_LQO_i)^2}$$
+```math
+\text{RMSE}_{\text{condition}} = \sqrt{\frac{1}{N_c} \sum_{i=1}^{N_c} (\text{MOS_LQS}_i - \text{MOS_LQO}_i)^2}
+```
 
 其中$N$为所有样本数，$N_c$为该条件样本数。
 
