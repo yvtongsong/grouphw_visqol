@@ -4,13 +4,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # ---------------------------
-# 1️⃣ 配置路径
+# 1. 配置路径
 # ---------------------------
 excel_path = "/root/TCD_VOIP/MOS_LQS.xlsx"   # Excel 文件，Sheet 3
 csv_root = "./visqol_csv"                    # ViSQOL 输出 CSV 根目录
 
 # ---------------------------
-# 2️⃣ 读取 MOS-LQS（主观评分）
+# 2. 读取 MOS-LQS（主观评分）
 # ---------------------------
 df_mos = pd.read_excel(excel_path, sheet_name=2)  # Sheet 3
 df_mos = df_mos[['Filename', 'ConditionID', 'sample MOS']]
@@ -19,7 +19,7 @@ df_mos['Filename'] = df_mos['Filename'].str.strip()
 df_mos['MOS_LQS'] = df_mos['MOS_LQS'].astype(float)
 
 # ---------------------------
-# 3️⃣ 递归读取 ViSQOL 输出 CSV
+# 3. 递归读取 ViSQOL 输出 CSV
 # ---------------------------
 moslqo_list = []
 
@@ -39,7 +39,7 @@ df_visqol['Filename'] = df_visqol['Filename'].str.strip()
 df_visqol['MOS_LQO'] = df_visqol['MOS_LQO'].astype(float)
 
 # ---------------------------
-# 4️⃣ 合并 MOS-LQS 和 MOS-LQO
+# 4. 合并 MOS-LQS 和 MOS-LQO
 # ---------------------------
 df = pd.merge(df_mos, df_visqol, on='Filename', how='inner')
 print(f"合并后样本数: {len(df)}")
@@ -47,7 +47,7 @@ if df.empty:
     raise ValueError("合并后 DataFrame 为空，请检查文件名是否匹配")
 
 # ---------------------------
-# 5️⃣ 提取劣化类型
+# 5. 提取劣化类型
 # ---------------------------
 def extract_type(filename):
     fname_upper = filename.upper()
@@ -67,13 +67,13 @@ def extract_type(filename):
 df['Degradation'] = df['Filename'].apply(extract_type)
 
 # ---------------------------
-# 6️⃣ 计算整体 RMSE
+# 6. 计算整体RMSE
 # ---------------------------
 rmse_overall = np.sqrt(np.mean((df['MOS_LQS'] - df['MOS_LQO'])**2))
 print(f"\n整体 RMSE: {rmse_overall:.4f}")
 
 # ---------------------------
-# 7️⃣ 按劣化类型分组 RMSE
+# 7. 按劣化类型分组RMSE
 # ---------------------------
 rmse_by_type = df.groupby('Degradation')[['MOS_LQS', 'MOS_LQO']].apply(
     lambda x: np.sqrt(np.mean((x['MOS_LQS'] - x['MOS_LQO'])**2))
@@ -82,14 +82,14 @@ print("\n按劣化类型分组 RMSE:")
 print(rmse_by_type)
 
 # ---------------------------
-# 8️⃣ 保存结果
+# 8. 保存结果
 # ---------------------------
 df.to_csv("merged_mos.csv", index=False)
 rmse_by_type.to_csv("rmse_by_type.csv", header=True)
 print("\n结果已保存：merged_mos.csv 和 rmse_by_type.csv")
 
 # ---------------------------
-# 9️⃣ 绘制分条件 RMSE 柱状图
+# 9. 绘制分条件 RMSE 柱状图
 # ---------------------------
 plt.figure(figsize=(8,5))
 rmse_by_type_sorted = rmse_by_type.sort_values()  # 可选：按 RMSE 排序
@@ -107,3 +107,55 @@ for i, v in enumerate(rmse_by_type_sorted.values):
 plt.tight_layout()
 plt.savefig("rmse_by_type.png", dpi=300)
 plt.show()
+
+# ---------------------------
+# 10. 绘制总图和单独子图
+# ---------------------------
+deg_types = df['Degradation'].unique()
+n_types = len(deg_types)
+
+# 单独输出每组个体点图
+for deg_type in deg_types:
+    subset = df[df['Degradation']==deg_type]
+    plt.figure(figsize=(12,4))
+    plt.plot(subset['Filename'], subset['MOS_LQS'], color='blue', marker='o', linestyle='-', alpha=0.7, label='MOS-LQS')
+    plt.plot(subset['Filename'], subset['MOS_LQO'], color='red', marker='x', linestyle='-', alpha=0.7, label='MOS-LQO')
+    plt.xticks(rotation=90)
+    plt.ylabel("MOS Value")
+    plt.title(f"Individual MOS - {deg_type}")
+    plt.grid(axis='y', linestyle='--', alpha=0.5)
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(f'individual_{deg_type}.png', dpi=300)
+    plt.close()
+
+# 绘制总图：每组个体点 + 组间平均点
+fig, axes = plt.subplots(n_types+1, 1, figsize=(15, 3*(n_types+1)), constrained_layout=True)
+
+# 左侧：个体点状图（含折线）
+for i, deg_type in enumerate(deg_types):
+    subset = df[df['Degradation']==deg_type]
+    axes[i].plot(subset['Filename'], subset['MOS_LQS'], color='blue', marker='o', linestyle='-', alpha=0.6, label='MOS-LQS')
+    axes[i].plot(subset['Filename'], subset['MOS_LQO'], color='red', marker='x', linestyle='-', alpha=0.6, label='MOS-LQO')
+    axes[i].set_title(f"Individual MOS - {deg_type}")
+    axes[i].set_ylabel("MOS Value")
+    axes[i].tick_params(axis='x', rotation=90)
+    axes[i].grid(axis='y', linestyle='--', alpha=0.5)
+    if i == 0:
+        axes[i].legend()
+
+# 右下：组间平均点 + 折线
+group_avg = df.groupby('Degradation')[['MOS_LQS','MOS_LQO']].mean()
+axes[-1].scatter(group_avg.index, group_avg['MOS_LQS'], color='blue', s=100, label='Average MOS-LQS')
+axes[-1].scatter(group_avg.index, group_avg['MOS_LQO'], color='red', s=100, label='Average MOS-LQO')
+axes[-1].plot(group_avg.index, group_avg['MOS_LQS'], color='blue', linestyle='--', alpha=0.7)
+axes[-1].plot(group_avg.index, group_avg['MOS_LQO'], color='red', linestyle='--', alpha=0.7)
+axes[-1].set_title("Average MOS per Degradation Type")
+axes[-1].set_ylabel("Average MOS")
+axes[-1].set_xlabel("Degradation Type")
+axes[-1].legend()
+axes[-1].grid(axis='y', linestyle='--', alpha=0.5)
+
+plt.savefig("mos_total_plot.png", dpi=300)
+plt.show()
+

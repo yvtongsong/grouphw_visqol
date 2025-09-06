@@ -188,26 +188,6 @@ print(rmse_by_type)
 df.to_csv("merged_mos.csv", index=False)
 rmse_by_type.to_csv("rmse_by_type.csv", header=True)
 print("\n结果已保存：merged_mos.csv 和 rmse_by_type.csv")
-
-# ---------------------------
-# 9. 绘制分条件 RMSE 柱状图
-# ---------------------------
-plt.figure(figsize=(8,5))
-rmse_by_type_sorted = rmse_by_type.sort_values()  # 可选：按 RMSE 排序
-plt.bar(rmse_by_type_sorted.index, rmse_by_type_sorted.values, color='skyblue')
-plt.xlabel("Degradation Type")
-plt.ylabel("RMSE")
-plt.title("RMSE by Degradation Type (ViSQOL)")
-plt.ylim(0, max(rmse_by_type_sorted.values)*1.2)  # 适当留白
-plt.grid(axis='y', linestyle='--', alpha=0.7)
-
-# 添加每个柱顶部数值
-for i, v in enumerate(rmse_by_type_sorted.values):
-    plt.text(i, v + 0.03, f"{v:.2f}", ha='center', va='bottom')
-
-plt.tight_layout()
-plt.savefig("rmse_by_type.png", dpi=300)
-plt.show()
 ```
 
 输出为:
@@ -232,3 +212,15 @@ dtype: float64
 所以整体RMSE为`1.2682`，分条件RMSE如下图所示:
 
 ![分条件RMSE柱状图](./images/rmse_by_type.png)
+
+![](./images/individual_chop.png)
+
+![](./images/individual_clip.png)
+
+![](./images/individual_compspkr.png)
+
+![](./images/individual_echo.png)
+
+![](./images/individual_noise.png)
+
+![](./images/total.png)
