@@ -94,7 +94,7 @@ done
 \text{RMSE}_{\text{condition}} = \sqrt{\frac{1}{N_c} \sum_{i=1}^{N_c} (\text{MOS\_LQS}_i - \text{MOS\_LQO}_i)^2}
 ```
 
-其中$N$为所有样本数，$N_c$为该条件样本数。
+其中$`N`$为所有样本数，$`N_c`$为该条件样本数。
 
 `TCD_VOIP`中包含了每段音频的平均主观评分MOS\_LQS，我们先从`.xlsx`文件中提取出这一数据，再计算RMSE:
 
