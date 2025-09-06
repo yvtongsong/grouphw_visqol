@@ -84,15 +84,15 @@ done
 
 对所有样本(整体):
 
-$$
-\text{RMSE}_{\text{overall}} = \sqrt{\frac{1}{N} \sum_{i=1}^{N} (\text{MOS_LQS}_i - \text{MOS_LQO}_i)^2}
-$$
+```math
+\text{RMSE}_{\text{overall}} = \sqrt{\frac{1}{N} \sum_{i=1}^{N} (\text{MOS\_LQS}_i - \text{MOS\_LQO}_i)^2}
+```
 
 对分条件(chop, clip, compspkr, echo, noise):
 
-$$
-\text{RMSE}_{\text{condition}} = \sqrt{\frac{1}{N_c} \sum_{i=1}^{N_c} (\text{MOS_LQS}_i - \text{MOS_LQO}_i)^2}
-$$
+```math
+\text{RMSE}_{\text{condition}} = \sqrt{\frac{1}{N_c} \sum_{i=1}^{N_c} (\text{MOS\_LQS}_i - \text{MOS\_LQO}_i)^2}
+```
 
 其中$N$为所有样本数，$N_c$为该条件样本数。
 
