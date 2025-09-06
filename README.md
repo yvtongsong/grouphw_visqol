@@ -79,11 +79,11 @@ done
 
 ## 整体RMSE分析
 
-[整体RMSE公式](./images/整体RMSE分析.png)
+![整体RMSE公式](./images/整体RMSE分析.png)
 
 ## 分条件RMSE分析
 
-[分条件RMSE分析](./images/分条件RMSE分析.png)
+![分条件RMSE分析](./images/分条件RMSE分析.png)
 
 ```python
 import os
